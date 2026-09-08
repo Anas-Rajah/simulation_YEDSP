@@ -1,0 +1,22 @@
+/* ===== YEDSP Demo — Design Tokens ===== */
+:root{
+  /* Institutional base */
+  --green-900:#0B3F33;  --green-800:#0E5140;  --green-700:#146953;
+  --green-100:#DDEBE5;
+  /* Gold — primary action ONLY, one button per screen */
+  --gold-700:#8F6417;   --gold-600:#B8862B;   --gold-100:#FBF1DC;
+  --gold-line:#E7D3AC;
+  /* Text and surfaces */
+  --ink:#101820;  --ink-2:#495259;  --ink-3:#7C868D;
+  --paper:#F4F6F5; --card:#FFFFFF; --line:#DDE3E0; --line-2:#EDF1EF;
+  /* Semantic */
+  --ok:#2E7D5B;   --ok-bg:#E4F1EA;
+  --warn:#B5811F; --warn-bg:#FBF3E0;
+  --crit:#B03A2E; --crit-bg:#FAEAE7;
+  --info:#215E7C; --info-bg:#E3EEF3;
+  /* Spacing — 4px unit */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px; --s12:48px;
+  --radius:8px; --radius-sm:4px;
+  /* Type scale */
+  --fs-title:24px; --fs-h2:18px; --fs-body:15px; --fs-sec:13px; --fs-label:12px;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YEDSP — المنصة الوطنية للخدمات الرقمية الطارئة</title>
+<meta name="description" content="منصة وطنية واحدة للخدمات الرقمية الطارئة: هوية رقمية موحّدة، دورة مساعدة كاملة، وسجل تدقيق تشفيري — عرض تجريبي بلا خادم.">
+<meta name="theme-color" content="#0B3F33">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%230B3F33'/%3E%3Cpath d='M20 8.6 30 12.4v7.9c0 6.1-4.3 9.8-10 11.6-5.7-1.8-10-5.5-10-11.6v-7.9L20 8.6z' fill='none' stroke='%23fff' stroke-width='1.9'/%3E%3Cpath d='m15.6 19.8 3.1 3.1 5.9-6.3' fill='none' stroke='%23B8862B' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/public.css">
+</head>
+<body dir="rtl">
+
+<noscript>يتطلّب هذا العرض التجريبي تفعيل JavaScript في المتصفح.</noscript>
+
+<div id="public-root"></div>
+
+<div id="app-header" class="hidden"></div>
+<div id="app-shell" class="hidden">
+  <nav id="app-nav"></nav>
+  <main id="app-main"><div id="app-view"></div></main>
+</div>
+<nav id="app-tabbar" class="hidden" aria-label="التنقّل السريع"></nav>
+
+<script src="data/geo.js"></script>
+<script src="data/seed.js"></script>
+<script src="js/state.js"></script>
+<script src="js/components.js"></script>
+<script src="js/views/landing.js"></script>
+<script src="js/views/login.js"></script>
+<script src="js/views/citizen.js"></script>
+<script src="js/views/field.js"></script>
+<script src="js/views/reviewer.js"></script>
+<script src="js/views/distributor.js"></script>
+<script src="js/views/operations.js"></script>
+<script src="js/views/protection.js"></script>
+<script src="js/views/donor.js"></script>
+<script src="js/views/admin.js"></script>
+<script src="js/views/integrator.js"></script>
+<script src="js/router.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

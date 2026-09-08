@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YEDSP — مواصفة بناء النظام الموحّد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ===== الهوية البصرية المعتمدة ===== */
+  --ink:#101820; --ink-2:#495259; --ink-3:#7C868D;
+  --green-900:#0B3F33; --green-800:#0E5140; --green-700:#146953; --green-100:#DDEBE5;
+  --gold-700:#8F6417; --gold-600:#B8862B; --gold-100:#FBF1DC; --gold-line:#E7D3AC;
+  --paper:#F4F6F5; --card:#FFF; --line:#DDE3E0; --line-2:#EDF1EF;
+  --ok:#2E7D5B; --ok-bg:#E4F1EA;
+  --warn:#B5811F; --warn-bg:#FBF3E0;
+  --crit:#B03A2E; --crit-bg:#FAEAE7;
+  --info:#215E7C; --info-bg:#E3EEF3;
+  --code:#0C1A17;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+code,pre,.mono{font-family:'IBM Plex Mono',monospace;direction:ltr}
+code{background:#E9EEEB;padding:1px 5px;border-radius:4px;font-size:.9em;color:var(--green-800)}
+
+.nav{position:sticky;top:0;z-index:50;background:var(--green-900);display:flex;align-items:center;gap:18px;padding:0 30px;height:56px}
+.nav .brand{color:#fff;font-weight:700;font-size:14px}
+.nav .brand span{color:rgba(255,255,255,.5);font-weight:400;margin-inline-start:8px;font-size:12px}
+.nav .sp{flex:1}
+.nav .meta{color:rgba(255,255,255,.45);font-size:11px;font-family:'IBM Plex Mono',monospace}
+
+.hero{background:linear-gradient(155deg,#0B3F33,#0E5140 60%,#146953);color:#fff;padding:50px 40px 44px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset-inline-start:-80px;bottom:-120px;width:340px;height:340px;border-radius:50%;background:rgba(184,134,43,.13)}
+.hero-in{max-width:1160px;margin:0 auto;position:relative}
+.hero .kicker{font-size:12px;color:var(--gold-100);margin-bottom:12px;font-weight:600;letter-spacing:.02em}
+.hero h1{font-size:29px;font-weight:700;line-height:1.5;max-width:800px;margin-bottom:14px}
+.hero p{font-size:14px;color:rgba(255,255,255,.75);max-width:740px}
+.hero .strip{display:flex;flex-wrap:wrap;gap:30px;margin-top:28px;padding-top:22px;border-top:1px solid rgba(255,255,255,.16)}
+.hero .st b{display:block;font-size:13px;font-weight:600;color:#fff}
+.hero .st i{font-style:normal;font-size:11px;color:rgba(255,255,255,.55)}
+
+.shell{display:flex;align-items:flex-start;max-width:1310px;margin:0 auto}
+.toc{width:254px;flex-shrink:0;position:sticky;top:56px;max-height:calc(100vh - 56px);overflow-y:auto;padding:28px 16px 40px;border-inline-start:1px solid var(--line)}
+.toc b{display:block;font-size:10.5px;color:var(--ink-3);font-weight:600;margin:15px 0 6px;padding-inline-start:10px}
+.toc b:first-child{margin-top:0}
+.toc a{display:block;font-size:12.5px;color:var(--ink-2);text-decoration:none;padding:5px 10px;border-radius:6px;font-weight:500}
+.toc a:hover{background:var(--green-100);color:var(--green-800)}
+main{flex:1;min-width:0;padding:34px 40px 100px}
+
+section{margin-bottom:50px;scroll-margin-top:70px}
+h2{font-size:19.5px;font-weight:700;color:var(--green-800);margin-bottom:8px;display:flex;align-items:baseline;gap:11px}
+h2 .n{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--gold-600);font-weight:600}
+h2+.lede{font-size:13.5px;color:var(--ink-2);margin-bottom:20px;max-width:780px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+h3{font-size:15px;font-weight:600;color:var(--green-700);margin:26px 0 9px}
+h4{font-size:13.5px;font-weight:600;margin:16px 0 6px}
+p{font-size:13.5px;margin-bottom:11px;max-width:810px}
+ul,ol{padding-inline-start:20px;margin-bottom:14px}
+li{font-size:13.5px;margin-bottom:6px;max-width:790px}
+b,strong{color:var(--green-800);font-weight:600}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0 20px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th{text-align:start;background:#EDF1EF;color:var(--ink-2);font-weight:600;padding:9px 11px;font-size:11.5px;border-bottom:1px solid var(--line)}
+td{padding:9px 11px;border-bottom:1px solid var(--line-2);vertical-align:top;line-height:1.6}
+tr:last-child td{border-bottom:none}
+td.mono,th.mono{font-family:'IBM Plex Mono',monospace;direction:ltr;text-align:left;font-size:11px;color:var(--green-700)}
+td.c{text-align:center}
+
+.tag{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.t-ok{background:var(--ok-bg);color:var(--ok)} .t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-crit{background:var(--crit-bg);color:var(--crit)} .t-g{background:var(--green-100);color:var(--green-800)}
+.t-o{background:var(--gold-100);color:var(--gold-700)} .t-i{background:var(--info-bg);color:var(--info)}
+
+.note{border-inline-start:3px solid var(--green-700);background:var(--card);padding:14px 16px;border-radius:0 8px 8px 0;margin:14px 0 18px;border:1px solid var(--line);border-inline-start-width:3px}
+.note.flag{border-inline-start-color:var(--gold-600);background:var(--gold-100);border-color:var(--gold-line);border-inline-start-width:3px}
+.note.crit{border-inline-start-color:var(--crit);background:var(--crit-bg);border-color:#F0D5D0;border-inline-start-width:3px}
+.note.ok{border-inline-start-color:var(--ok);background:var(--ok-bg);border-color:#CDE5D8;border-inline-start-width:3px}
+.note b{display:block;margin-bottom:4px;font-size:12.5px}
+.note p{font-size:12.5px;margin:0;max-width:none}
+.note p+p{margin-top:7px}
+.note ul{margin:6px 0 0}.note li{font-size:12.5px;margin-bottom:4px}
+
+pre.code{background:var(--code);color:#D3E2DC;border-radius:8px;padding:15px 17px;overflow-x:auto;font-size:11.5px;line-height:1.75;direction:ltr;text-align:left;margin:12px 0 18px}
+pre.code .c{color:#6E8A80}pre.code .k{color:#D9A857}pre.code .s{color:#8FC9A8}pre.code .d{color:#7FB8D4}
+pre.tree{background:#FAFCFB;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:15px 17px;overflow-x:auto;font-size:11.5px;line-height:1.85;direction:ltr;text-align:left;margin:12px 0 18px;font-family:'IBM Plex Mono',monospace}
+pre.tree .d{color:var(--green-700);font-weight:600}
+pre.tree .c{color:var(--ink-3)}
+
+.fig{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 18px 12px;margin:16px 0 22px;overflow-x:auto}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.fig figcaption{font-size:11.5px;color:var(--ink-3);text-align:center;margin-top:12px;padding-top:11px;border-top:1px solid var(--line-2)}
+
+.grid{display:grid;gap:12px;margin:14px 0 20px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:980px){.g2,.g3,.g4{grid-template-columns:1fr}.toc{display:none}main{padding:26px 20px 70px}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:15px 17px}
+.box h4{margin:0 0 6px}.box p{font-size:12.5px;color:var(--ink-2);margin:0;max-width:none}
+
+.mod{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.mod-h{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--green-900)}
+.mod-h .id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--green-900);background:var(--gold-600);padding:3px 9px;border-radius:4px}
+.mod-h .ttl{font-size:14px;font-weight:600;color:#fff;flex:1}
+.mod-h .own{font-size:10.5px;color:rgba(255,255,255,.55)}
+.mod-b{padding:15px 17px}
+.mod-b p{font-size:12.8px}
+.mod-b table{margin-top:10px}
+.mod-b h4{font-size:12.5px;color:var(--green-700);margin:14px 0 5px}
+.mod-b h4:first-child{margin-top:0}
+
+.swatch{display:flex;flex-wrap:wrap;gap:0;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin:12px 0 8px}
+.sw{flex:1;min-width:96px;padding:26px 10px 12px;color:#fff}
+.sw b{display:block;font-size:11.5px;font-weight:600}
+.sw i{font-style:normal;font-size:10px;opacity:.75;font-family:'IBM Plex Mono',monospace}
+.sw.dark b,.sw.dark i{color:var(--ink)}
+
+footer{border-top:1px solid var(--line);padding:24px 40px;text-align:center;font-size:11.5px;color:var(--ink-3);background:var(--card)}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="brand">YEDSP<span>مواصفة بناء النظام الموحّد</span></div>
+  <div class="sp"></div>
+  <div class="meta">NAT-2026-YEDSP · BUILD-SPEC v1.0</div>
+</div>
+
+<div class="hero">
+<div class="hero-in">
+  <div class="kicker">الفريق الأول · هندسة البرمجيات والحلول التقنية</div>
+  <h1>المنصة الوطنية للخدمات الرقمية الطارئة — مواصفة بناء نظام واحد متكامل</h1>
+  <p>ليست وثيقة دمج بين ثلاثة أنظمة. هذه مواصفة بناء منتج واحد نملكه بالكامل: نموذج بيانات واحد، وواجهة برمجية واحدة، وقاعدة كود واحدة، وهوية بصرية واحدة. النماذج الأولية التي أنتجها الفريقان الثاني والثالث استُخدمت كمرجع لفهم الاحتياج فقط، وكل قرار تقني في هذه الوثيقة صادر عن فريقنا.</p>
+  <div class="strip">
+    <div class="st"><b>٩ وحدات وظيفية</b><i>في منتج واحد</i></div>
+    <div class="st"><b>١٠ أدوار</b><i>بمصفوفة صلاحيات واحدة</i></div>
+    <div class="st"><b>٢٣ جدولاً</b><i>قاعدة بيانات واحدة</i></div>
+    <div class="st"><b>٣٤ شاشة</b><i>بنظام تصميم واحد</i></div>
+    <div class="st"><b>٩ نوفمبر ٢٠٢٦</b><i>موعد التسليم</i></div>
+  </div>
+</div>
+</div>
+
+<div class="shell">
+<nav class="toc">
+  <b>المنتج</b>
+  <a href="#s1">١ · تعريف المنتج ونطاقه</a>
+  <a href="#s2">٢ · المستخدمون والأدوار</a>
+  <a href="#s3">٣ · خريطة النظام</a>
+  <a href="#s4">٤ · قرارات التصميم المعتمدة</a>
+  <b>الهوية والواجهة</b>
+  <a href="#s5">٥ · الهوية البصرية</a>
+  <a href="#s6">٦ · نظام المكوّنات</a>
+  <a href="#s7">٧ · خريطة الشاشات</a>
+  <b>الوحدات</b>
+  <a href="#s8">٨ · الوحدات التسع بالتفصيل</a>
+  <b>التقنية</b>
+  <a href="#s9">٩ · المعمارية التقنية</a>
+  <a href="#s10">١٠ · نموذج البيانات</a>
+  <a href="#s11">١١ · الواجهة البرمجية</a>
+  <a href="#s12">١٢ · العمل بدون إنترنت</a>
+  <a href="#s13">١٣ · الأمان</a>
+  <a href="#s14">١٤ · الأداء وقيود البيئة</a>
+  <b>البناء</b>
+  <a href="#s15">١٥ · هيكل المستودع والمعايير</a>
+  <a href="#s16">١٦ · الاختبار والقبول</a>
+  <a href="#s17">١٧ · قائمة الجاهزية</a>
+</nav>
+
+<main>
+
+<!-- 1 -->
+<section id="s1">
+<h2><span class="n">01</span>تعريف المنتج ونطاقه</h2>
+<div class="lede">جملة واحدة يُقاس عليها كل قرار لاحق.</div>
+
+<div class="note">
+<b>تعريف المنتج</b>
+<p>منصة وطنية واحدة تمنح كل مواطن يمني هوية رقمية موحّدة يُتحقق منها حتى بلا إنترنت، وتتيح له طلب المساعدة الإنسانية عبر أي قناة متاحة له، وتتابع فرق الميدان في اثنتين وعشرين محافظة، وتتتبّع كل دولار من لحظة تعهّد المانح به حتى لحظة استلام المستفيد له — بسجل تشفيري غير قابل للتعديل يفتحه المانح والرقيب متى شاء.</p>
+</div>
+
+<h3>معيار القبول الأول: الخيط الواحد</h3>
+<p>المنتج ينجح إذا استطاع رقم وطني واحد أن يُنتج أثراً مترابطاً عبر النظام كله من عملية واحدة: يُسجَّل المستفيد ميدانياً بلا إنترنت، فيُتحقق من هويته، ويُعتمد طلبه، وتصدر قسيمته، وتُصرف في مركزه — ثم يظهر الحدث نفسه في خارطة التغطية، وفي سجل التدقيق، وفي لوحة المانح. إذا انقطع هذا الخيط في أي نقطة، فنحن نبني وحدات متجاورة لا منصة.</p>
+
+<h3>داخل النطاق</h3>
+<div class="grid g3">
+<div class="box"><h4>الهوية والتحقق</h4><p>سجل رقمي موحّد للمستفيدين، وتحقق مشفّر يمنع الازدواجية، ومصادقة ثنائية للأدوار الحساسة</p></div>
+<div class="box"><h4>دورة المساعدة</h4><p>تقديم الطلب عبر أربع قنوات، والفحص والاعتماد ضمن مهلة ملزمة، وإصدار القسائم وصرفها بالتحقق المزدوج</p></div>
+<div class="box"><h4>العمليات الميدانية</h4><p>خارطة تفاعلية للمحافظات، وتكليفات المسّاحين، وسجل الأزمات، ومؤشرات التغطية والأداء</p></div>
+<div class="box"><h4>الحماية والمساءلة</h4><p>بلاغات المواطنين بثلاث فئات ومُهل مختلفة، مع دعم البلاغ المجهول والتصعيد الآلي</p></div>
+<div class="box"><h4>التمويل والشفافية</h4><p>محفظة المنح وتخصيصها جغرافياً، ولوحة مانح تربط كل مبلغ بمستفيد فعلي</p></div>
+<div class="box"><h4>التدقيق والإدارة</h4><p>سلسلة تشفيرية للأحداث الحساسة، وإدارة الحسابات والصلاحيات والمرجعيات</p></div>
+</div>
+
+<h3>خارج النطاق</h3>
+<ul>
+<li>إصدار الجوازات أو الوثائق السيادية الرسمية.</li>
+<li>التحويلات المصرفية المباشرة أو معالجة المدفوعات — المنصة تتتبّع التدفق ولا تنفّذه.</li>
+<li>إدارة المخازن اللوجستية للمواد العينية.</li>
+<li><b>أدوات إدارة مشروع التطوير نفسه</b> — منحنيات الإنجاز ونقاط السبرينت وسجل مخاطر الفريق تبقى في Jira ولا تدخل المنتج. المنتج للمواطن والمانح والميدان، لا لفريق التطوير.</li>
+</ul>
+
+<div class="note flag">
+<b>ما أخذناه من النماذج الأولية وما تركناه</b>
+<p><b>أخذنا:</b> من نموذج الفريق الثاني — الخارطة التفاعلية للمحافظات، ومؤشرات التغطية، وسجل الأزمات الميدانية، وتكليفات المسّاحين، والتقارير التشغيلية. ومن نموذج الفريق الثالث — تصوّر دورة حياة الطلب، وتصنيف الشكاوى الثلاثي، وفكرة سلسلة التدقيق، وبنية بوابة المانح.</p>
+<p><b>تركنا:</b> كل منطق إدارة المشروع (السبرينتات والمنحنيات ونقاط الجهد)، وكل التصميمات البصرية، وكل بنى البيانات وأسماء الحقول — أُعيد تصميمها من الصفر في هذه الوثيقة.</p>
+</div>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+<h2><span class="n">02</span>المستخدمون والأدوار</h2>
+<div class="lede">عشرة أدوار في مصفوفة صلاحيات واحدة.</div>
+
+<table>
+<thead><tr><th class="mono" style="width:140px">الدور</th><th style="width:150px">المسمى</th><th>ما يفعله</th><th style="width:110px">القناة الأساسية</th></tr></thead>
+<tbody>
+<tr><td class="mono">citizen</td><td>مواطن مستفيد</td><td>يسجّل، يقدّم طلباً، يتتبّع حالته، يستعرض قسيمته، يقدّم شكوى</td><td>هاتف · USSD</td></tr>
+<tr><td class="mono">surveyor</td><td>مسّاح ميداني</td><td>يسجّل المستفيدين ميدانياً، يتحقق من الهوية، يرفع بلاغات الأزمات</td><td>جهاز يعمل بلا اتصال</td></tr>
+<tr><td class="mono">field_coordinator</td><td>منسق طوارئ</td><td>يوزّع التكليفات جغرافياً، يفتح الأزمات ويتابعها في محافظته</td><td>لوحة · جوال</td></tr>
+<tr><td class="mono">ops_manager</td><td>مدير الاستجابة</td><td>يرى الخارطة الوطنية، يتابع مؤشرات التغطية، يرفع التقارير التشغيلية</td><td>لوحة مكتبية</td></tr>
+<tr><td class="mono">reviewer</td><td>موظف فحص</td><td>يفحص طابور الطلبات، يتحقق، يعتمد أو يرفض ضمن ٢٤ ساعة</td><td>لوحة مكتبية</td></tr>
+<tr><td class="mono">distributor</td><td>موظف مركز توزيع</td><td>يمسح رمز القسيمة، يطابق الرمز السري، يؤكد الصرف</td><td>جهاز المركز · يعمل بلا اتصال</td></tr>
+<tr><td class="mono">auditor</td><td>مسؤول حماية ومساءلة</td><td>يفرز البلاغات، يحقق في القضايا الأمنية، يتحقق من سلسلة التدقيق</td><td>لوحة مكتبية</td></tr>
+<tr><td class="mono">donor</td><td>جهة ممولة</td><td>يتابع استهلاك منحه، يرى التوزيع الجغرافي، يصدّر الكشوف</td><td>لوحة مكتبية</td></tr>
+<tr><td class="mono">admin</td><td>مشرف عام</td><td>يدير الحسابات والصلاحيات والمرجعيات ومعايير المُهل</td><td>لوحة إدارة</td></tr>
+<tr><td class="mono">integrator</td><td>حساب نظام</td><td>وصول آلي للمنظمات الشريكة — قراءة فقط بمفتاح مقيّد المعدل</td><td>واجهة برمجية</td></tr>
+</tbody>
+</table>
+
+<h3>مصفوفة الصلاحيات</h3>
+<p>الصلاحية معرّف نصي ثابت لا شاشة. الدور حزمة صلاحيات قابلة للتعديل من لوحة الإدارة أثناء التشغيل، ويمكن منح صلاحية استثنائية لمستخدم بعينه دون تغيير دوره. الصلاحيات الثماني عشرة:</p>
+
+<table>
+<thead><tr><th style="width:130px">المجال</th><th>الصلاحيات</th></tr></thead>
+<tbody>
+<tr><td>المواطن</td><td class="mono">apply_aid · submit_complaint</td></tr>
+<tr><td>الميدان</td><td class="mono">verify_identity · manage_assignments · manage_crises · view_coverage</td></tr>
+<tr><td>الطلبات</td><td class="mono">review_requests · approve_requests</td></tr>
+<tr><td>التوزيع</td><td class="mono">scan_vouchers · deliver_packages</td></tr>
+<tr><td>الحماية</td><td class="mono">triage_complaints · investigate_reports</td></tr>
+<tr><td>الرقابة</td><td class="mono">view_audit_trail</td></tr>
+<tr><td>التمويل</td><td class="mono">manage_grants · export_reports</td></tr>
+<tr><td>الإدارة</td><td class="mono">manage_users · manage_settings · manage_references</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+<h2><span class="n">03</span>خريطة النظام</h2>
+<div class="lede">تسع وحدات في منتج واحد، وتدفق واحد يربطها.</div>
+
+<div class="fig">
+<svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans Arabic, sans-serif">
+<defs>
+<marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#7C868D" stroke-width="1.3"/></marker>
+<style>.mt{font-size:12px;font-weight:600;fill:#fff}.ms{font-size:9.5px;fill:rgba(255,255,255,.68)}
+.dt{font-size:11.5px;font-weight:600;fill:#101820}.ds{font-size:9.5px;fill:#7C868D}.lb{font-size:10px;fill:#495259}</style>
+</defs>
+
+<!-- channels row -->
+<rect x="30" y="20" width="200" height="44" rx="7" fill="#fff" stroke="#DDE3E0"/>
+<text x="130" y="40" text-anchor="middle" class="dt">بوابة المواطن</text><text x="130" y="55" text-anchor="middle" class="ds">متصفح خفيف · أقل من 500KB</text>
+<rect x="246" y="20" width="170" height="44" rx="7" fill="#fff" stroke="#DDE3E0"/>
+<text x="331" y="40" text-anchor="middle" class="dt">USSD ‎*888#</text><text x="331" y="55" text-anchor="middle" class="ds">هاتف عادي</text>
+<rect x="432" y="20" width="200" height="44" rx="7" fill="#FBF1DC" stroke="#E7D3AC"/>
+<text x="532" y="40" text-anchor="middle" class="dt">تطبيق الميدان والمركز</text><text x="532" y="55" text-anchor="middle" class="ds">يعمل بلا اتصال</text>
+<rect x="648" y="20" width="282" height="44" rx="7" fill="#fff" stroke="#DDE3E0"/>
+<text x="789" y="40" text-anchor="middle" class="dt">لوحات المكاتب</text><text x="789" y="55" text-anchor="middle" class="ds">الفحص · العمليات · الحماية · المانح · الإدارة</text>
+
+<!-- modules -->
+<g>
+<rect x="30" y="98" width="212" height="56" rx="8" fill="#0B3F33"/>
+<text x="136" y="120" text-anchor="middle" class="mt">M1 · الهوية والمصادقة</text><text x="136" y="137" text-anchor="middle" class="ms">UUID · منع الازدواجية · JWT · 2FA</text>
+
+<rect x="258" y="98" width="212" height="56" rx="8" fill="#0E5140"/>
+<text x="364" y="120" text-anchor="middle" class="mt">M2 · سجل المستفيدين</text><text x="364" y="137" text-anchor="middle" class="ms">بيانات مشفّرة · دمج المكرر</text>
+
+<rect x="486" y="98" width="212" height="56" rx="8" fill="#0E5140"/>
+<text x="592" y="120" text-anchor="middle" class="mt">M3 · طلبات المساعدة</text><text x="592" y="137" text-anchor="middle" class="ms">هشاشة · مهلة ٢٤ ساعة</text>
+
+<rect x="714" y="98" width="216" height="56" rx="8" fill="#0E5140"/>
+<text x="822" y="120" text-anchor="middle" class="mt">M4 · القسائم والصرف</text><text x="822" y="137" text-anchor="middle" class="ms">QR موقّع · رمز سري مُجزّأ</text>
+
+<rect x="30" y="186" width="212" height="56" rx="8" fill="#146953"/>
+<text x="136" y="208" text-anchor="middle" class="mt">M5 · العمليات الميدانية</text><text x="136" y="225" text-anchor="middle" class="ms">خارطة · تكليفات · أزمات</text>
+
+<rect x="258" y="186" width="212" height="56" rx="8" fill="#146953"/>
+<text x="364" y="208" text-anchor="middle" class="mt">M6 · الحماية والبلاغات</text><text x="364" y="225" text-anchor="middle" class="ms">ثلاث فئات · تصعيد آلي</text>
+
+<rect x="486" y="186" width="212" height="56" rx="8" fill="#146953"/>
+<text x="592" y="208" text-anchor="middle" class="mt">M7 · التمويل والشفافية</text><text x="592" y="225" text-anchor="middle" class="ms">منح · تخصيص · لوحة مانح</text>
+
+<rect x="714" y="186" width="216" height="56" rx="8" fill="#146953"/>
+<text x="822" y="208" text-anchor="middle" class="mt">M8 · التحليلات والمؤشرات</text><text x="822" y="225" text-anchor="middle" class="ms">تغطية · أداء · تقارير</text>
+
+<rect x="30" y="274" width="440" height="52" rx="8" fill="#B8862B"/>
+<text x="250" y="295" text-anchor="middle" class="mt">M9 · التدقيق التشفيري</text><text x="250" y="312" text-anchor="middle" class="ms">سلسلة SHA-256 · كل الوحدات تكتب فيها ولا تعدّلها</text>
+
+<rect x="486" y="274" width="444" height="52" rx="8" fill="#0B3F33"/>
+<text x="708" y="295" text-anchor="middle" class="mt">الخدمات المشتركة</text><text x="708" y="312" text-anchor="middle" class="ms">المرجعيات · الإشعارات · المزامنة · الصلاحيات · تقييد المعدل</text>
+</g>
+
+<!-- data -->
+<rect x="30" y="358" width="440" height="48" rx="8" fill="#fff" stroke="#DDE3E0"/>
+<text x="250" y="379" text-anchor="middle" class="dt">PostgreSQL 16</text><text x="250" y="395" text-anchor="middle" class="ds">٢٣ جدولاً · تشفير الحقول الحساسة · سجل للإضافة فقط</text>
+<rect x="486" y="358" width="444" height="48" rx="8" fill="#FBF1DC" stroke="#E7D3AC"/>
+<text x="708" y="379" text-anchor="middle" class="dt">SQLCipher على أجهزة الميدان والمراكز</text><text x="708" y="395" text-anchor="middle" class="ds">مخزن محلي مشفّر · حتى ١٠٠٠ عملية معلّقة</text>
+
+<g stroke="#7C868D" stroke-width="1.2" fill="none" marker-end="url(#ar)">
+<path d="M130 64 L133 94"/><path d="M331 64 L200 94"/><path d="M532 64 L560 94"/><path d="M789 64 L800 94"/>
+<path d="M136 154 L136 182"/><path d="M364 154 L364 182"/><path d="M592 154 L592 182"/><path d="M822 154 L822 182"/>
+<path d="M242 126 L254 126"/><path d="M470 126 L482 126"/><path d="M698 126 L710 126"/>
+<path d="M250 242 L250 270" stroke="#B8862B"/><path d="M708 242 L708 270"/>
+</g>
+<text x="480" y="440" text-anchor="middle" class="lb">كل وحدة تكتب في M9 عند كل عملية حساسة · لا وحدة تقرأ من قاعدة وحدة أخرى مباشرةً بل عبر خدمتها</text>
+</svg>
+<figcaption>خريطة النظام. الوحدات الأربع العلوية تشكّل الخيط الأساسي، والأربع الوسطى تحيط به، والذهبية سجل يكتب فيه الجميع.</figcaption>
+</div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+<h2><span class="n">04</span>قرارات التصميم المعتمدة</h2>
+<div class="lede">عشرة قرارات تحكم كل ما يليها. كل قرار مع بديله المرفوض حتى لا يُعاد فتح النقاش.</div>
+
+<table>
+<thead><tr><th class="mono" style="width:70px">الرمز</th><th style="width:210px">القرار</th><th>التبرير والبديل المرفوض</th></tr></thead>
+<tbody>
+<tr><td class="mono">DEC-01</td><td><b>مصدر حقيقة واحد للهوية</b></td><td>لا وحدة تتحقق من رقم وطني بنفسها؛ كل تحقق عبر خدمة الهوية. الرقم يُخزَّن مجزّأً بقيد تفرّد ولا يُحفظ خاماً. <b>المرفوض:</b> تحقق محلي في كل وحدة — يُسقط هدف منع الازدواجية ويجعله غير قابل للقياس.</td></tr>
+<tr><td class="mono">DEC-02</td><td><b>المرجعيات جداول لا نصوص</b></td><td>المحافظات والمراكز والقطاعات والحزم جداول بمفاتيح ثابتة، والاسم العربي يُقرأ منها ولا يُخزَّن مكرراً. <b>المرفوض:</b> نصوص حرة — تُنتج «الحديدة» و«الحُديدة» و«حديدة» في ثلاثة سجلات لمكان واحد.</td></tr>
+<tr><td class="mono">DEC-03</td><td><b>فصل المستفيد عن الحساب</b></td><td>جدول <code>citizens</code> منفصل عن <code>users</code>؛ المسّاح يسجّل مستفيدين بلا هواتف ولا حسابات. <b>المرفوض:</b> جدول واحد — يجبرنا على حسابات وهمية لكل مستفيد.</td></tr>
+<tr><td class="mono">DEC-04</td><td><b>كل المنطق في الخادم</b></td><td>نقاط الهشاشة، ورقم القسيمة، وموعد المهلة، ودرجة الخطر — كلها تُحتسب في الخادم. <b>المرفوض:</b> احتساب في المتصفح — يجعل المستخدم قادراً على رفع أولوية طلبه بأدوات المطوّر.</td></tr>
+<tr><td class="mono">DEC-05</td><td><b>الأرقام المتحققة تُحسب</b></td><td>عدد من وصلتهم المساعدة = عدّ القسائم المصروفة عبر عرض محسوب مسبقاً. المستهدف فقط يُخزَّن. <b>المرفوض:</b> تخزين الرقم المتحقق — يُنتج رقمين متعارضين يُعرضان على المانح نفسه.</td></tr>
+<tr><td class="mono">DEC-06</td><td><b>أوفلاين في الميدان فقط</b></td><td>قناتان تعملان بلا اتصال: تسجيل المسّاح، وصرف القسائم في المركز. باقي الشاشات تتطلب اتصالاً. <b>المرفوض:</b> تعميم الأوفلاين — كلفة وتعقيد بلا عائد.</td></tr>
+<tr><td class="mono">DEC-07</td><td><b>مفتاح تفرّد على كل عملية تغيّر حالة</b></td><td>الاعتماد والصرف والمزامنة تقبل <code>Idempotency-Key</code>. <b>المرفوض:</b> الاعتماد على الشبكة — إعادة الإرسال بعد ضياع الاستجابة تُنتج صرفاً مزدوجاً، وهو ما بُنيت المنصة لمنعه.</td></tr>
+<tr><td class="mono">DEC-08</td><td><b>الرمز السري لا يُعرض لموظف</b></td><td>يُجزّأ بـ bcrypt، ويُرسل مرة واحدة للمواطن، ويُتحقق منه بالمقارنة. <b>المرفوض:</b> عرضه في شاشة الموظف — يمكّن أي موظف من صرف قسيمة أي مستفيد.</td></tr>
+<tr><td class="mono">DEC-09</td><td><b>سجل التدقيق لا يُكتب فيه من الخارج</b></td><td>الحلقة تُكتب داخل معاملة العملية نفسها في الخادم؛ لا مسار <code>POST</code> عام. <b>المرفوض:</b> مسار كتابة مفتوح — سجل يُكتب فيه من الخارج ليس سجل تدقيق.</td></tr>
+<tr><td class="mono">DEC-10</td><td><b>أرقام لاتينية في كل مكان</b></td><td>الأرقام الوطنية ورموز القسائم والمبالغ والهواتف بأرقام لاتينية (0-9) في الواجهة والرسائل والتصدير. <b>المرفوض:</b> الأرقام العربية الهندية — تتقاطع مع رموز QR والرسائل النصية وملفات التصدير فتُنتج أخطاء نسخ في الميدان.</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+<h2><span class="n">05</span>الهوية البصرية</h2>
+<div class="lede">هوية واحدة تخدم بيئة صعبة: شمس ساطعة، أجهزة قديمة، شبكات ضعيفة، وقراء بمستويات تعليم متفاوتة.</div>
+
+<h3>لماذا هذه الألوان</h3>
+<p>معظم منصات الإغاثة تختار الأزرق الأممي، فتتشابه كلها ولا يميّز المستخدم منصته من غيرها. اخترنا <b>الأخضر الداكن</b> مرجعاً مؤسسياً — أعلى تباين مع النص الأبيض تحت شمس ساطعة، ويحمل دلالة الأمن الغذائي والزراعة في السياق المحلي. و<b>الذهبي</b> لوناً واحداً حصرياً للفعل: كل زر رئيسي ذهبي، ولا شيء آخر ذهبي. هذا يعني أن المسّاح في الميدان يجد زر الإجراء دون أن يقرأ.</p>
+
+<div class="swatch">
+<div class="sw" style="background:#0B3F33"><b>الأساس المؤسسي</b><i>#0B3F33</i></div>
+<div class="sw" style="background:#0E5140"><b>الأخضر الرئيسي</b><i>#0E5140</i></div>
+<div class="sw" style="background:#146953"><b>أخضر ثانوي</b><i>#146953</i></div>
+<div class="sw" style="background:#B8862B"><b>الفعل — حصري</b><i>#B8862B</i></div>
+<div class="sw dark" style="background:#DDEBE5"><b>خلفية خضراء</b><i>#DDEBE5</i></div>
+<div class="sw dark" style="background:#FBF1DC"><b>خلفية ذهبية</b><i>#FBF1DC</i></div>
+</div>
+<div class="swatch">
+<div class="sw" style="background:#101820"><b>النص الأساسي</b><i>#101820</i></div>
+<div class="sw" style="background:#495259"><b>نص ثانوي</b><i>#495259</i></div>
+<div class="sw" style="background:#2E7D5B"><b>نجاح</b><i>#2E7D5B</i></div>
+<div class="sw" style="background:#B5811F"><b>تحذير</b><i>#B5811F</i></div>
+<div class="sw" style="background:#B03A2E"><b>خطر</b><i>#B03A2E</i></div>
+<div class="sw" style="background:#215E7C"><b>معلومة</b><i>#215E7C</i></div>
+</div>
+
+<div class="note flag">
+<b>قاعدة اللون الحصرية</b>
+<p>الذهبي للفعل الرئيسي فقط — زر واحد ذهبي في الشاشة الواحدة. لو صار الذهبي لوناً زخرفياً يُستخدم في العناوين والحدود، فقد معناه، وعاد المستخدم مضطراً لقراءة كل زر. هذه القاعدة تُفحص في مراجعة الكود.</p>
+</div>
+
+<h3>الخطوط</h3>
+<table>
+<thead><tr><th style="width:170px">الاستخدام</th><th style="width:210px">الخط</th><th>القاعدة</th></tr></thead>
+<tbody>
+<tr><td>لوحات الموظفين</td><td class="mono">IBM Plex Sans Arabic</td><td>الأوزان 400 و600 و700 فقط — ثلاثة أوزان تكفي وتقلل حجم التحميل</td></tr>
+<tr><td>بوابة المواطن</td><td class="mono">system-ui, 'Noto Sans Arabic', sans-serif</td><td><b>لا خط ويب إطلاقاً.</b> ملف الخط العربي يتجاوز 100KB وحده، وسقف الصفحة 500KB. خط النظام يظهر فوراً على أي جهاز</td></tr>
+<tr><td>المعرّفات والرموز</td><td class="mono">IBM Plex Mono</td><td>أرقام الطلبات والقسائم والهواتف والمبالغ — العرض الثابت يجعل مقارنة الأرقام بصرياً ممكنة</td></tr>
+</tbody>
+</table>
+
+<h3>سلّم الأحجام</h3>
+<table>
+<thead><tr><th style="width:110px">المستوى</th><th style="width:90px">الحجم</th><th style="width:90px">الوزن</th><th>الاستخدام</th></tr></thead>
+<tbody>
+<tr><td>عنوان صفحة</td><td class="mono">24px</td><td class="mono">700</td><td>عنوان الشاشة الوحيد في أعلاها</td></tr>
+<tr><td>عنوان قسم</td><td class="mono">18px</td><td class="mono">600</td><td>عناوين البطاقات والأقسام</td></tr>
+<tr><td>نص أساسي</td><td class="mono">15px</td><td class="mono">400</td><td>الأساس — لا أصغر من هذا في بوابة المواطن</td></tr>
+<tr><td>نص ثانوي</td><td class="mono">13px</td><td class="mono">400</td><td>الوصف والتفاصيل المساندة</td></tr>
+<tr><td>تسمية</td><td class="mono">12px</td><td class="mono">600</td><td>الشارات وتسميات الحقول — الحد الأدنى المطلق</td></tr>
+</tbody>
+</table>
+
+<h3>قواعد التخطيط</h3>
+<ul>
+<li><b>وحدة المسافة 4px.</b> كل الهوامش والحشوات مضاعفات لها: 4 · 8 · 12 · 16 · 24 · 32 · 48.</li>
+<li><b>نصف قطر الزوايا 8px</b> للبطاقات والأزرار، و4px للشارات. قيمتان لا أكثر.</li>
+<li><b>الاتجاه من اليمين لليسار أصلاً</b> لا معكوساً لاحقاً: كل الخصائص منطقية (<code>margin-inline-start</code> لا <code>margin-left</code>).</li>
+<li><b>مساحة اللمس 48×48 بكسل</b> كحد أدنى لكل عنصر تفاعلي — المسّاح يعمل واقفاً وأحياناً بقفازات.</li>
+<li><b>عمود واحد على الجوال</b> بلا استثناء. الجداول تتحول إلى بطاقات مكدّسة لا إلى تمرير أفقي.</li>
+<li><b>الظلال ممنوعة</b> — نستخدم الحدود بدلاً منها. الظلال تختفي تحت الشمس وتستهلك أداء العرض على الأجهزة القديمة.</li>
+</ul>
+
+<div class="note">
+<b>وضوح الحالة بلا لون</b>
+<p>حالة الطلب أو القسيمة يجب أن تكون مفهومة بالنص وحده، لا باللون وحده. جزء من المستخدمين يعمل تحت ضوء يغسل الألوان، وجزء لديه عمى ألوان. كل شارة حالة تحمل نصاً صريحاً: «قيد الفحص»، «معتمد»، «مصروف».</p>
+</div>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+<h2><span class="n">06</span>نظام المكوّنات</h2>
+<div class="lede">اثنا عشر مكوّناً تُبنى منها كل الشاشات. لا مكوّن خارجها إلا بقرار.</div>
+
+<table>
+<thead><tr><th style="width:160px">المكوّن</th><th>القاعدة</th></tr></thead>
+<tbody>
+<tr><td><b>الزر</b></td><td>ثلاثة أنماط: رئيسي (ذهبي، واحد لكل شاشة)، ثانوي (حدود خضراء)، هادئ (نص فقط). الارتفاع 48px والنص 15px وزن 600</td></tr>
+<tr><td><b>حقل الإدخال</b></td><td>تسمية فوق الحقل دائماً لا داخله — التسمية الداخلية تختفي عند الكتابة فينسى المستخدم ما يكتب. رسالة الخطأ تحت الحقل بنص صريح لا برمز</td></tr>
+<tr><td><b>البطاقة</b></td><td>خلفية بيضاء، حد 1px، زوايا 8px، حشوة 16px. لا ظل</td></tr>
+<tr><td><b>شارة الحالة</b></td><td>نص + لون خلفية فاتحة. النص إلزامي واللون مساعد</td></tr>
+<tr><td><b>الجدول</b></td><td>على الشاشات العريضة جدول، وعلى الجوال بطاقات مكدّسة. لا تمرير أفقي إطلاقاً</td></tr>
+<tr><td><b>الخارطة</b></td><td>SVG لمحافظات اليمن الـ 22 مع تدرّج لوني للتغطية، وتكبير وسحب. تعمل بلا مكتبة خرائط خارجية لتقليل الحجم</td></tr>
+<tr><td><b>بطاقة المؤشر</b></td><td>رقم كبير + تسمية + اتجاه التغير. لا رسوم داخلها</td></tr>
+<tr><td><b>الرسم البياني</b></td><td>SVG مولّد من البيانات، بلا مكتبة رسم. ثلاثة أنواع فقط: أعمدة، خط، حلقة</td></tr>
+<tr><td><b>خطوات التقدم</b></td><td>لدورة حياة الطلب: مقدَّم ← قيد الفحص ← معتمد ← قسيمة ← مصروف. الخطوة الحالية بارزة والباقي باهت</td></tr>
+<tr><td><b>الحوار</b></td><td>للتأكيد على الإجراءات غير القابلة للتراجع فقط: الصرف، الرفض، الحذف. لا حوارات للمعلومات</td></tr>
+<tr><td><b>التنبيه</b></td><td>أربعة أنواع بألوان الدلالة الأربعة، مع رمز ونص. لا يختفي تلقائياً إن كان خطأ</td></tr>
+<tr><td><b>الحالة الفارغة</b></td><td>كل قائمة تحتاج حالة فارغة تشرح ما يجب فعله. «لا توجد بيانات» وحدها غير مقبولة</td></tr>
+</tbody>
+</table>
+
+<h3>ثلاث حالات إلزامية لكل شاشة</h3>
+<p>أي شاشة تجلب بيانات تُبنى بثلاث حالات لا واحدة: <b>التحميل</b> بهياكل عظمية لا دوّامة، و<b>الفارغة</b> بشرح الخطوة التالية، و<b>الخطأ</b> برسالة عربية صريحة وزر إعادة محاولة. الشاشة التي تعرض الحالة الناجحة فقط تُعتبر غير مكتملة في مراجعة الكود.</p>
+
+<div class="note flag">
+<b>مؤشر الاتصال في تطبيق الميدان</b>
+<p>شريط ثابت أعلى الشاشة يعرض حالة الاتصال وعدد العمليات المعلّقة: «متصل — كل شيء متزامن» أو «بلا اتصال — 12 عملية بانتظار المزامنة». المسّاح يجب أن يعرف حالته دون أن يسأل، وإلا فقد الثقة في الجهاز وعاد للورق.</p>
+</div>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+<h2><span class="n">07</span>خريطة الشاشات</h2>
+<div class="lede">أربع وثلاثون شاشة موزعة على ست مساحات حسب الدور.</div>
+
+<table>
+<thead><tr><th style="width:150px">المساحة</th><th style="width:120px">الأدوار</th><th>الشاشات</th></tr></thead>
+<tbody>
+<tr>
+<td><b>بوابة المواطن</b><br><span class="tag t-g">7 شاشات</span></td><td class="mono">citizen</td>
+<td>الرئيسية · التسجيل بالهوية · تقديم طلب · تتبّع طلباتي · تفاصيل الطلب · قسيمتي (رمز QR) · تقديم بلاغ وتتبّعه</td>
+</tr>
+<tr>
+<td><b>تطبيق الميدان</b><br><span class="tag t-o">5 شاشات · أوفلاين</span></td><td class="mono">surveyor</td>
+<td>تكليفاتي · تسجيل مستفيد · التحقق من هوية · بلاغ أزمة · حالة المزامنة والطابور</td>
+</tr>
+<tr>
+<td><b>مساحة الفحص</b><br><span class="tag t-g">4 شاشات</span></td><td class="mono">reviewer</td>
+<td>طابور الطلبات مرتّباً بالهشاشة والمهلة · فحص طلب · سجل قراراتي · بحث في المستفيدين</td>
+</tr>
+<tr>
+<td><b>مساحة التوزيع</b><br><span class="tag t-o">3 شاشات · أوفلاين</span></td><td class="mono">distributor</td>
+<td>مسح رمز القسيمة · تأكيد الصرف بالرمز السري · سجل الصرف اليومي للمركز</td>
+</tr>
+<tr>
+<td><b>مساحة العمليات</b><br><span class="tag t-g">6 شاشات</span></td><td class="mono">field_coordinator<br>ops_manager</td>
+<td>الخارطة الوطنية · تفاصيل المحافظة · التكليفات الميدانية · سجل الأزمات · مؤشرات الأداء · التقارير التشغيلية</td>
+</tr>
+<tr>
+<td><b>مساحة الحماية</b><br><span class="tag t-g">3 شاشات</span></td><td class="mono">auditor</td>
+<td>لوحة فرز البلاغات · تفاصيل بلاغ وتحقيق · سجل التدقيق والتحقق من السلسلة</td>
+</tr>
+<tr>
+<td><b>مساحة المانح</b><br><span class="tag t-g">3 شاشات</span></td><td class="mono">donor</td>
+<td>لوحة منحي · التوزيع الجغرافي للمنحة · التقارير وشهادات الأثر</td>
+</tr>
+<tr>
+<td><b>لوحة الإدارة</b><br><span class="tag t-g">3 شاشات</span></td><td class="mono">admin</td>
+<td>الحسابات · مصفوفة الصلاحيات · المرجعيات وإعدادات المُهل</td>
+</tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>قاعدة التنقّل</b>
+<p>المستخدم يرى مساحته فقط. لا قائمة جانبية موحّدة تعرض كل شيء ثم تخفي ما لا يملك صلاحيته — بل قائمة مبنية من صلاحياته الفعلية. عرض عنصر معطّل يخبر المستخدم بوجود ما لا يصله، وهذا تسريب معلومات لا فائدة منه.</p>
+</div>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+<h2><span class="n">08</span>الوحدات التسع بالتفصيل</h2>
+<div class="lede">لكل وحدة: وظائفها، وقواعد عملها، وما تكتبه في سجل التدقيق.</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M1</span><span class="ttl">الهوية والمصادقة</span><span class="own">الوحدة الأساس — كل شيء يمر بها</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>إصدار معرّف موحّد لكل مستفيد، وفحص الازدواجية قبل أي عملية، ودخول موحّد بـ JWT، ومصادقة ثنائية للأدوار الحساسة، وإدارة الجلسات وتجديدها.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>الرقم الوطني يُخزَّن مجزّأً بـ SHA-256 مع مِلح ثابت للمنصة، ولا يُحفظ خاماً في أي مكان.</li>
+<li>قيد تفرّد على التجزئة — أول خط دفاع ضد الازدواجية.</li>
+<li>فحص ثانٍ قبل الاعتماد: هل استلم هذا المستفيد من هذا القطاع في هذه الدورة؟</li>
+<li>المصادقة الثنائية إلزامية للأدوار: الفحص، التوزيع، الحماية، الإدارة. المواطن يكفيه رمز رسالة نصية.</li>
+<li>رمز الدخول عمره 15 دقيقة مع رمز تجديد لسبعة أيام.</li>
+<li>عند اكتشاف مكرر: لا يُحذف السجل بل يُعلَّم ويُربط بالسجل الأصلي — الحذف يفقد أثر ما حدث.</li>
+</ul>
+<h4>يكتب في التدقيق</h4>
+<p>إصدار هوية جديدة · رصد محاولة تسجيل مكرر · دمج سجلين.</p>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M2</span><span class="ttl">سجل المستفيدين</span><span class="own">مصدر الحقيقة للأشخاص</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>تسجيل المستفيد بأربع قنوات، وتخزين بياناته مشفّرة، والبحث والاسترجاع بصلاحية، وإدارة السجلات المكررة.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>الاسم الكامل والهاتف مشفّران على مستوى الحقل — تشفير القرص وحده لا يحمي من تسريب نسخة احتياطية.</li>
+<li>الرقم الوطني لا يظهر كاملاً في أي واجهة؛ يُقنَّع إلى آخر أربع خانات.</li>
+<li>حقل قناة التسجيل إلزامي: ويب · USSD · ميداني · خط ساخن — يفيد في تحليل الوصول لاحقاً.</li>
+<li>عدد أفراد الأسرة مدخل إلزامي لأنه أحد مدخلات نقاط الهشاشة.</li>
+</ul>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M3</span><span class="ttl">طلبات المساعدة</span><span class="own">قلب دورة الحياة</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>تقديم الطلب في أحد القطاعات الخمسة، واحتساب نقاط الهشاشة، وترتيب طابور الفحص، والاعتماد أو الرفض ضمن مهلة ملزمة، وسجل تحوّلات كامل.</p>
+<h4>دورة الحياة</h4>
+<p class="mono" style="font-size:11.5px;color:var(--green-700)">draft → submitted → reviewing → approved → voucher → delivered · أو → rejected</p>
+<h4>خوارزمية نقاط الهشاشة</h4>
+<p>تُحتسب في الخادم من: عدد أفراد الأسرة، ومستوى الدخل، ووضع المعيل، ووجود إعاقة، ووجود حامل أو مرضع. النتيجة من صفر إلى مئة، وهي ترتيب الطابور لا قرار الاعتماد. المعاملات مخزّنة في الإعدادات لا في الكود، ليعدّلها المشرف عند تغيّر المعايير الإنسانية.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>طلب نشط واحد لكل مستفيد في كل قطاع — يفرضه فهرس فريد جزئي في القاعدة لا فحص في الكود.</li>
+<li>المهلة 24 ساعة تُحتسب عند التقديم، والطلبات المتجاوزة تظهر بارزة في أعلى الطابور.</li>
+<li>الرفض يتطلب سبباً نصياً إلزامياً، والسبب يظهر للمواطن في شاشة التتبع — الرفض بلا سبب مصدر رئيسي للشكاوى.</li>
+<li>كل تحوّل حالة يُسجَّل في جدول التاريخ مع الفاعل والوقت والملاحظة.</li>
+</ul>
+<h4>يكتب في التدقيق</h4>
+<p>اعتماد طلب · رفض طلب.</p>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M4</span><span class="ttl">القسائم والصرف</span><span class="own">نقطة الالتقاء مع المستفيد</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>توليد القسيمة عند الاعتماد، وإصدار رمز QR موقّع ورمز سري، وإشعار المواطن، والتحقق والصرف في المركز، وسجل الصرف اليومي.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>رمز QR موقّع بـ HMAC لا نص عادي — بدون التوقيع يستطيع أي أحد توليد قسيمة صالحة الشكل.</li>
+<li>الرمز السري مُجزّأ بـ bcrypt، يُرسل مرة واحدة للمواطن، ولا يُرجَع في أي استجابة ولا يُعرض لأي موظف.</li>
+<li>الصرف يتطلب مسح الرمز <b>و</b> مطابقة الرمز السري — عاملان لا واحد.</li>
+<li>ثلاث محاولات خاطئة للرمز السري تُعلّق القسيمة وتُنشئ بلاغاً تلقائياً لوحدة الحماية.</li>
+<li>القسيمة تنتهي صلاحيتها بعد ثلاثين يوماً وتعود مخصصاتها إلى المنحة.</li>
+<li>الصرف يقبل مفتاح تفرّد؛ إعادة الإرسال بنفس المفتاح تُرجع النتيجة الأولى ولا تكرّر العملية.</li>
+</ul>
+<h4>يكتب في التدقيق</h4>
+<p>إصدار قسيمة · صرف قسيمة · تعليق قسيمة.</p>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M5</span><span class="ttl">العمليات الميدانية</span><span class="own">مستوحاة من نموذج الفريق الثاني</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>خارطة تفاعلية للمحافظات الـ 22 بتدرّج لوني للتغطية، وتوزيع التكليفات على المسّاحين جغرافياً، وسجل الأزمات الميدانية، ومتابعة إنجاز الفرق.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>التغطية المعروضة على الخارطة محسوبة من القسائم المصروفة، لا رقماً مخزّناً — هذا يضمن أن الخارطة والمانح يريان الرقم نفسه دائماً.</li>
+<li>التكليف مرتبط بمحافظة ومركز من المرجعيات، لا بنص حر.</li>
+<li>الأزمة لها ثلاث درجات خطورة وثلاث حالات، وتحمل حقلاً يربطها بالبلاغ الذي صعّدها إن وُجد.</li>
+<li>الخارطة SVG مبنية داخلياً بلا مكتبة خرائط خارجية — تقليل الحجم شرط لا تفضيل.</li>
+</ul>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M6</span><span class="ttl">الحماية والبلاغات</span><span class="own">قناة المساءلة</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>استقبال البلاغات بأربع قنوات، وتصنيفها بثلاث فئات بمُهل مختلفة، ولوحة فرز، والتحقيق والإغلاق، والتصعيد الآلي.</p>
+<h4>الفئات والمُهل</h4>
+<table>
+<thead><tr><th style="width:80px">الفئة</th><th style="width:150px">النوع</th><th style="width:80px">المهلة</th><th>أمثلة</th></tr></thead>
+<tbody>
+<tr><td class="mono">S</td><td>أمنية وحماية</td><td><span class="tag t-crit">4 ساعات</span></td><td>تهديد · ابتزاز · منع وصول · استغلال</td></tr>
+<tr><td class="mono">F</td><td>مالية وفساد</td><td><span class="tag t-warn">24 ساعة</span></td><td>طلب رشوة · اقتطاع من الحصة · محاباة</td></tr>
+<tr><td class="mono">O</td><td>تشغيلية</td><td><span class="tag t-ok">48 ساعة</span></td><td>تأخر توزيع · نقص كمية · بُعد المركز</td></tr>
+</tbody>
+</table>
+<h4>قواعد العمل</h4>
+<ul>
+<li><b>البلاغ المجهول مقبول</b> — حقل الاسم اختياري. اشتراط الهوية في بلاغ ابتزاز يقتل القناة من أساسها.</li>
+<li>بلاغ فئة <code>S</code> ينتقل إلى «قيد التحقيق» فيفتح أزمة ميدانية تلقائياً في محافظته بخطورة عالية، ويُخطر منسق الطوارئ.</li>
+<li>لا يمكن إغلاق الأزمة المتصعّدة قبل إغلاق البلاغ الأصلي.</li>
+<li>المواطن يتتبّع بلاغه برقم متابعة دون تسجيل دخول.</li>
+</ul>
+<h4>يكتب في التدقيق</h4>
+<p>إغلاق بلاغ · تصعيد بلاغ إلى أزمة.</p>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M7</span><span class="ttl">التمويل والشفافية</span><span class="own">واجهة المانح</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>تسجيل الجهات المانحة ومنحها، وتخصيص المنحة على المحافظات والمراكز، ولوحة استهلاك حيّة، وتصدير الكشوف وشهادات الأثر.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>المنحة تُخصَّص جغرافياً بمبلغ وعدد مستفيدين مستهدف؛ المستهدف يُخزَّن والمتحقق يُحسب.</li>
+<li>مجموع التخصيصات لا يتجاوز مبلغ المنحة — قيد على مستوى القاعدة لا تحقق في الواجهة.</li>
+<li>شهادة الأثر تُولَّد من عدّ القسائم المصروفة فعلياً وتحمل مرجعاً إلى حلقات سجل التدقيق المقابلة.</li>
+<li>المانح يرى منحه هو فقط — عزل على مستوى الاستعلام لا على مستوى الواجهة.</li>
+</ul>
+<h4>يكتب في التدقيق</h4>
+<p>إنشاء منحة · تعديل تخصيص.</p>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M8</span><span class="ttl">التحليلات والمؤشرات</span><span class="own">مستوحاة من إحصائيات نموذج الفريق الثاني</span></div>
+<div class="mod-b">
+<h4>المؤشرات المعتمدة</h4>
+<table>
+<thead><tr><th style="width:220px">المؤشر</th><th>طريقة الاحتساب</th></tr></thead>
+<tbody>
+<tr><td>نسبة التغطية لكل محافظة</td><td>القسائم المصروفة ÷ المستهدف المخصَّص للمحافظة</td></tr>
+<tr><td>المستفيدون الفعليون</td><td>عدّ المستفيدين المتفرّدين بقسيمة مصروفة</td></tr>
+<tr><td>متوسط زمن الفحص</td><td>من التقديم إلى القرار — يقيس الالتزام بمهلة الـ 24 ساعة</td></tr>
+<tr><td>نسبة تجاوز المهلة</td><td>الطلبات التي تجاوزت مهلتها ÷ الإجمالي</td></tr>
+<tr><td>معدل إنجاز المسّاحين</td><td>المنجز ÷ المستهدف لكل تكليف</td></tr>
+<tr><td>الأزمات المفتوحة</td><td>عدّ حسب المحافظة والخطورة</td></tr>
+<tr><td>البلاغات المتجاوزة لمهلتها</td><td>حسب الفئة — مؤشر مساءلة أساسي</td></tr>
+<tr><td>استهلاك المنح</td><td>المصروف ÷ المخصَّص لكل منحة ولكل محافظة</td></tr>
+<tr><td>توزيع الطلبات على القطاعات</td><td>يكشف أين يتركّز الاحتياج فعلياً</td></tr>
+</tbody>
+</table>
+<h4>قواعد العمل</h4>
+<ul>
+<li>كل المؤشرات محسوبة من الجداول التشغيلية عبر عروض محسوبة مسبقاً تُحدَّث كل خمس دقائق — لا جداول إحصاء موازية تتباعد عن الواقع.</li>
+<li>التصدير إلى CSV و PDF بترميز يدعم العربية، مع رأس يحمل تاريخ الاستخراج واسم المستخرِج.</li>
+<li>لا يظهر أي مؤشر يعتمد على أقل من خمسة سجلات في التقارير العامة — حماية لخصوصية المستفيدين في المناطق قليلة الكثافة.</li>
+</ul>
+</div>
+</div>
+
+<div class="mod">
+<div class="mod-h"><span class="id">M9</span><span class="ttl">التدقيق التشفيري والإدارة</span><span class="own">أساس المصداقية</span></div>
+<div class="mod-b">
+<h4>الوظائف</h4>
+<p>سلسلة أحداث مترابطة بـ SHA-256، وواجهة تحقق من سلامتها، وإدارة الحسابات ومصفوفة الصلاحيات والمرجعيات والإعدادات.</p>
+<h4>الأحداث الموثّقة — سبعة فقط</h4>
+<p>إصدار هوية · اعتماد طلب · رفض طلب · إصدار قسيمة · صرف قسيمة · تعديل صلاحيات · تخصيص أو تعديل منحة. توثيق كل نقرة يُغرق السجل ويجعله بلا معنى.</p>
+<h4>قواعد العمل</h4>
+<ul>
+<li>الحلقة تُحتسب في الخادم فقط، والطابع الزمني يُحسب مرة ويُخزَّن ولا يُعاد احتسابه عند التحقق.</li>
+<li>ترميز الحمولة قانوني — مفاتيح مرتبة وبلا مسافات — وإلا أنتج المحتوى نفسه بصمتين مختلفتين.</li>
+<li>الحلقة تُكتب داخل معاملة العملية نفسها؛ إن فشل حفظ القسيمة تفشل الحلقة معها.</li>
+<li>الجدول للإضافة فقط: قاعدتان تمنعان التعديل والحذف، <b>وتُسحب</b> صلاحيتا التعديل والحذف من مستخدم التطبيق على مستوى القاعدة — القاعدة وحدها لا تكفي لأن مالك الجدول يستطيع حذفها.</li>
+<li>مهمة يومية تعيد احتساب السلسلة كاملة وتُنبّه عند أي كسر.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+<h2><span class="n">09</span>المعمارية التقنية</h2>
+<div class="lede">حزمة واحدة، مبنية على مهارات الفريق الفعلية.</div>
+
+<table>
+<thead><tr><th style="width:130px">الطبقة</th><th style="width:210px">الأداة</th><th>سبب الاختيار</th></tr></thead>
+<tbody>
+<tr><td>اللغة والإطار</td><td class="mono">Python 3.12 · FastAPI</td><td>Python أقوى مهارات الفريق بفارق واضح؛ وFastAPI يولّد وثائق الواجهة تلقائياً</td></tr>
+<tr><td>قاعدة البيانات</td><td class="mono">PostgreSQL 16</td><td>يدعم <code>ENUM</code> و<code>JSONB</code> والعروض المحسوبة و<code>pgcrypto</code> — كلها مستخدمة في مخططنا</td></tr>
+<tr><td>طبقة البيانات</td><td class="mono">SQLAlchemy 2 · Alembic</td><td>هجرات مُصدَّرة — المخطط سيتغيّر أثناء البناء ولا نريد تعديلات يدوية</td></tr>
+<tr><td>التحقق</td><td class="mono">Pydantic v2</td><td>يفرض العقد عند الحدود ويتولى تحويل أسماء الحقول بإعداد واحد</td></tr>
+<tr><td>المصادقة</td><td class="mono">PyJWT · pyotp · passlib[bcrypt]</td><td>رمز موقّع، ورموز مؤقتة، وتجزئة كلمات المرور والرموز السرية</td></tr>
+<tr><td>التشفير</td><td class="mono">cryptography (AES-256-GCM)</td><td>تشفير الأسماء والهواتف وتفاصيل البلاغات على مستوى الحقل</td></tr>
+<tr><td>الحماية</td><td class="mono">slowapi + Redis</td><td>تقييد المعدل، بتشديد على مسارَي الدخول والتحقق من الهوية</td></tr>
+<tr><td>الواجهات</td><td class="mono">Jinja2 · CSS مخصص</td><td>عرض من الخادم لا تطبيق أحادي الصفحة — أسرع على الأجهزة القديمة وأخف بكثير</td></tr>
+<tr><td>التفاعلية</td><td class="mono">JavaScript أصلي · Alpine.js عند اللزوم</td><td>لا إطار واجهة كامل؛ حزمة React وحدها تتجاوز سقف الـ 500KB لبوابة المواطن</td></tr>
+<tr><td>الميدان</td><td class="mono">SQLite + SQLCipher</td><td>مخزن محلي مشفّر على أجهزة المسّاحين والمراكز</td></tr>
+<tr><td>الحاويات</td><td class="mono">Docker · Compose</td><td>بيئة موحّدة تُنهي «تعمل عندي ولا تعمل عندك»</td></tr>
+<tr><td>الاختبار والجودة</td><td class="mono">pytest · httpx · ruff · black</td><td>فحص وتنسيق آليان — أرخص طريقة لتوحيد أسلوب ثمانية مطورين</td></tr>
+</tbody>
+</table>
+
+<div class="note flag">
+<b>لماذا Jinja2 لا React</b>
+<p>ميثاق المشروع يشترط أن تكون واجهة المواطن أقل من 500KB وتعمل على متصفحات قديمة وشبكات ضعيفة. حزمة React مع مكتباتها تتجاوز هذا السقف قبل كتابة أي شاشة. العرض من الخادم مع تفاعلية بسيطة يحقق الشرط، ويناسب أيضاً مهارات الفريق أكثر من إطار واجهة يحتاج منحنى تعلّم موازياً.</p>
+</div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+<h2><span class="n">10</span>نموذج البيانات</h2>
+<div class="lede">ثلاثة وعشرون جدولاً في تسع مجموعات.</div>
+
+<table>
+<thead><tr><th style="width:150px">المجموعة</th><th style="width:290px">الجداول</th><th>ملاحظة التصميم</th></tr></thead>
+<tbody>
+<tr><td><b>المرجعيات</b></td><td class="mono">governorates · distribution_sites<br>sectors · aid_packages</td><td>مصدر الحقيقة للقوائم؛ يُمنع النص الحر في أي حقل مرجعي</td></tr>
+<tr><td><b>الهوية</b></td><td class="mono">citizens</td><td>رقم مجزّأ باسم مشفّر، وعلم ازدواجية ورابط دمج</td></tr>
+<tr><td><b>الحسابات</b></td><td class="mono">users</td><td>عشرة أدوار مع قيد يفرض المصادقة الثنائية على الأربعة الحساسة</td></tr>
+<tr><td><b>الصلاحيات</b></td><td class="mono">system_permissions · role_permissions</td><td>ثماني عشرة صلاحية قابلة للتعديل أثناء التشغيل</td></tr>
+<tr><td><b>الطلبات</b></td><td class="mono">aid_requests · request_history</td><td>فهرس فريد جزئي يمنع الطلب النشط المكرر لنفس القطاع</td></tr>
+<tr><td><b>القسائم</b></td><td class="mono">vouchers</td><td>رمز سري مُجزّأ وتوقيع QR ومفتاح تفرّد للصرف</td></tr>
+<tr><td><b>الحماية</b></td><td class="mono">complaints</td><td>الاسم اختياري لدعم البلاغ المجهول، ومهلة مختلفة لكل فئة</td></tr>
+<tr><td><b>الميدان</b></td><td class="mono">field_assignments · crises</td><td>الأزمة تحمل حقلاً يربطها بالبلاغ الذي صعّدها</td></tr>
+<tr><td><b>التمويل</b></td><td class="mono">donors · grants · grant_allocations</td><td>قيد يمنع تجاوز مجموع التخصيصات لمبلغ المنحة</td></tr>
+<tr><td><b>التشغيل</b></td><td class="mono">sync_queue · audit_trail</td><td>طابور المزامنة، وسجل للإضافة فقط مربوط بنوع الكيان ومعرّفه</td></tr>
+</tbody>
+</table>
+
+<h3>ثلاث قواعد في نمذجة البيانات</h3>
+<ul>
+<li><b>سجل التدقيق يُربط بـ (نوع الكيان، معرّف الكيان)</b> لا بمفتاح أجنبي واحد — لأنه يوثّق أحداثاً على كيانات مختلفة ولا يمكن لمفتاح واحد أن يخدمها كلها.</li>
+<li><b>القيود في القاعدة لا في الكود.</b> منع الطلب المكرر، وسقف التخصيصات، وإلزام سبب الرفض — كلها قيود على مستوى القاعدة. الفحص في الكود وحده يُتجاوَز بأول مسار جديد ينساه المطور.</li>
+<li><b>لا حذف فيزيائي.</b> كل حذف إلغاء منطقي بعلم <code>is_active</code>، لأن سجل المساعدات الإنسانية يجب أن يكون قابلاً للتدقيق بأثر رجعي.</li>
+</ul>
+
+<div class="note">
+<b>المخطط الجاهز</b>
+<p>ملف <code>unified_schema.sql</code> المرفق يحتوي المخطط كاملاً بالجداول والقيود والفهارس وبيانات المحافظات الـ 22 والقطاعات والصلاحيات، وقواعد حماية سجل التدقيق، وعرض التغطية المحسوب — جاهز للتنفيذ على قاعدة فارغة.</p>
+</div>
+</section>
+
+<!-- 11 -->
+<section id="s11">
+<h2><span class="n">11</span>الواجهة البرمجية</h2>
+<div class="lede">عقد واحد تلتزم به كل المسارات.</div>
+
+<pre class="code"><span class="c">// نجاح</span>
+{ <span class="d">"ok"</span>: <span class="k">true</span>, <span class="d">"data"</span>: { ... }, <span class="d">"meta"</span>: { <span class="d">"page"</span>: 1, <span class="d">"total"</span>: 248 } }
+
+<span class="c">// فشل — نفس الشكل دائماً</span>
+{ <span class="d">"ok"</span>: <span class="k">false</span>,
+  <span class="d">"error"</span>: { <span class="d">"code"</span>: <span class="s">"DUPLICATE_BENEFICIARY"</span>,
+              <span class="d">"message"</span>: <span class="s">"المستفيد مسجّل مسبقاً في هذا القطاع"</span>,
+              <span class="d">"details"</span>: { <span class="d">"existingRequestId"</span>: <span class="s">"REQ-2026-0912"</span> } },
+  <span class="d">"traceId"</span>: <span class="s">"7f3a91c2"</span> }</pre>
+
+<table>
+<thead><tr><th style="width:160px">المعيار</th><th>القاعدة</th></tr></thead>
+<tbody>
+<tr><td>الإصدار</td><td>كل المسارات تحت <code>/api/v1/</code></td></tr>
+<tr><td>التسمية</td><td>موارد بصيغة الجمع بأحرف صغيرة وشرطات: <code>/aid-requests</code></td></tr>
+<tr><td>الإجراءات</td><td>الأفعال غير الـ CRUD كمسار فرعي: <code>POST /aid-requests/{id}/approve</code></td></tr>
+<tr><td>رمز الخطأ</td><td>ثابت إنجليزي تتفرّع عليه الواجهة؛ الرسالة العربية للعرض فقط. التفرّع على النص يكسر المنطق عند أي تحسين صياغة</td></tr>
+<tr><td>الترقيم</td><td><code>?page=1&amp;perPage=25</code> بسقف 100، والإجمالي في <code>meta</code></td></tr>
+<tr><td>التفرّد</td><td><code>Idempotency-Key</code> إلزامي على الاعتماد والصرف والمزامنة</td></tr>
+<tr><td>التتبع</td><td><code>X-Trace-Id</code> في كل استجابة ويظهر في السجلات</td></tr>
+<tr><td>تقييد المعدل</td><td>60/دقيقة عامةً · 10 للتحقق من الهوية · 5 لمحاولات الدخول</td></tr>
+</tbody>
+</table>
+
+<h3>خريطة المسارات</h3>
+<table>
+<thead><tr><th class="mono" style="width:240px">المسار</th><th style="width:100px">Method</th><th>الوظيفة</th></tr></thead>
+<tbody>
+<tr><td class="mono">/auth/login · /verify-2fa · /refresh · /me</td><td class="mono">POST·GET</td><td>الدخول والمصادقة الثنائية وتجديد الجلسة والملف الشخصي</td></tr>
+<tr><td class="mono">/identity/verify · /register</td><td class="mono">POST</td><td>التحقق من الهوية وتسجيل مستفيد مع فحص الازدواجية</td></tr>
+<tr><td class="mono">/citizens · /citizens/{uuid}</td><td class="mono">GET·PATCH</td><td>البحث في المستفيدين وقراءة سجل بصلاحية</td></tr>
+<tr><td class="mono">/refs/{resource}</td><td class="mono">GET</td><td>المحافظات · المراكز · القطاعات · الحزم</td></tr>
+<tr><td class="mono">/aid-requests</td><td class="mono">GET·POST</td><td>الطابور والتقديم؛ الهشاشة والمهلة تُحسبان في الخادم</td></tr>
+<tr><td class="mono">/aid-requests/{id}/approve · /reject</td><td class="mono">POST</td><td>الاعتماد وإصدار القسيمة في معاملة واحدة، أو الرفض بسبب إلزامي</td></tr>
+<tr><td class="mono">/vouchers/verify · /{id}/deliver</td><td class="mono">POST</td><td>التحقق والصرف؛ الرمز السري يُقارَن ولا يُرجَع</td></tr>
+<tr><td class="mono">/complaints · /{id}/status</td><td class="mono">GET·POST·PATCH</td><td>البلاغات بكل القنوات مع دعم المجهول والتصعيد</td></tr>
+<tr><td class="mono">/field/assignments · /crises</td><td class="mono">CRUD</td><td>التكليفات والأزمات الميدانية</td></tr>
+<tr><td class="mono">/analytics/coverage · /performance</td><td class="mono">GET</td><td>مؤشرات التغطية والأداء — محسوبة لا مخزّنة</td></tr>
+<tr><td class="mono">/grants · /allocations · /impact-report</td><td class="mono">CRUD·GET</td><td>المنح والتخصيصات وشهادات الأثر</td></tr>
+<tr><td class="mono">/sync/batch</td><td class="mono">POST</td><td>استقبال دفعة ميدانية وحل التعارضات</td></tr>
+<tr><td class="mono">/audit/trail · /audit/verify</td><td class="mono">GET</td><td>قراءة السلسلة والتحقق منها — <b>لا يوجد POST</b></td></tr>
+<tr><td class="mono">/admin/users · /permissions · /settings</td><td class="mono">CRUD</td><td>الحسابات والصلاحيات والمرجعيات والمُهل</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 12 -->
+<section id="s12">
+<h2><span class="n">12</span>العمل بدون إنترنت</h2>
+<div class="lede">الخطر الأول في المشروع، ومعالجته الهندسية بخمس مراحل.</div>
+
+<div class="fig">
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans Arabic, sans-serif">
+<defs><style>.ac{font-size:11px;font-weight:600;fill:#101820}.ms{font-size:10px;fill:#495259}.nt{font-size:9.5px;fill:#8F6417}</style>
+<marker id="m2" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="#7C868D" stroke-width="1.2"/></marker></defs>
+<g>
+<rect x="700" y="16" width="180" height="30" rx="5" fill="#FBF1DC" stroke="#E7D3AC"/><text x="790" y="36" text-anchor="middle" class="ac">جهاز الميدان · SQLCipher</text>
+<rect x="470" y="16" width="180" height="30" rx="5" fill="#DDEBE5" stroke="#B9D3C8"/><text x="560" y="36" text-anchor="middle" class="ac">‎/sync/batch</text>
+<rect x="240" y="16" width="180" height="30" rx="5" fill="#DDEBE5" stroke="#B9D3C8"/><text x="330" y="36" text-anchor="middle" class="ac">محرك حل التعارض</text>
+<rect x="20" y="16" width="180" height="30" rx="5" fill="#FBF1DC" stroke="#E7D3AC"/><text x="110" y="36" text-anchor="middle" class="ac">القاعدة + سجل التدقيق</text>
+</g>
+<g stroke="#C8D4CE" stroke-width="1" stroke-dasharray="4 4">
+<line x1="790" y1="46" x2="790" y2="286"/><line x1="560" y1="46" x2="560" y2="286"/>
+<line x1="330" y1="46" x2="330" y2="286"/><line x1="110" y1="46" x2="110" y2="286"/>
+</g>
+<g stroke="#7C868D" stroke-width="1.3" fill="none" marker-end="url(#m2)">
+<path d="M786 78 L568 78"/><path d="M556 114 L338 114"/><path d="M326 150 L118 150"/>
+<path d="M110 186 L322 186" stroke-dasharray="3 3"/>
+<path d="M326 222 L552 222" stroke-dasharray="3 3"/>
+<path d="M556 256 L786 256" stroke-dasharray="3 3"/>
+</g>
+<g class="ms">
+<text x="770" y="72" text-anchor="end">دفعة واحدة: العمليات المعلّقة مع وقت الجهاز ومفتاح تفرّد لكل عملية</text>
+<text x="540" y="108" text-anchor="end">تحقق التوقيع وفك التشفير والتحقق من كل عنصر</text>
+<text x="310" y="144" text-anchor="end">لكل عملية: هل المفتاح مستهلَك؟ هل صُرفت من جهاز آخر؟</text>
+<text x="200" y="180">تطبيق الأسبق زمنياً · تعليم المتأخر «تعارض»</text>
+<text x="352" y="216">تقرير: نجح · فشل · تعارض</text>
+<text x="580" y="250">‎{ syncedIds[], failedIds[], conflictIds[] }</text>
+</g>
+<text x="450" y="286" text-anchor="middle" class="nt">الجهاز يمسح الناجح فقط ويُبقي الباقي — مسح الطابور قبل التأكيد يعني فقدان صرف حدث فعلاً في الميدان</text>
+</svg>
+<figcaption>الأسبق زمنياً يفوز، والمتأخر يُعلَّم للمراجعة البشرية ولا يُحذف أبداً.</figcaption>
+</div>
+
+<table>
+<thead><tr><th style="width:120px">المرحلة</th><th>ما يحدث</th><th style="width:230px">القرار</th></tr></thead>
+<tbody>
+<tr><td><b>١ التحضير</b></td><td>عند آخر اتصال يسحب الجهاز نسخة من قسائم مركزه ومن المستفيدين المتوقعين في نطاق تكليفه</td><td>النطاق محصور بالمركز أو المحافظة لا بالوطن — تقليل حجم النسخة وحصر أثر ضياع الجهاز</td></tr>
+<tr><td><b>٢ التسجيل</b></td><td>كل تحقق أو صرف يُكتب محلياً بطابع زمني وتوقيع جهاز، بسقف ألف عملية معلّقة</td><td>كل عملية تحمل معرّف الجهاز ووقته ومفتاح تفرّد يولّده الجهاز</td></tr>
+<tr><td><b>٣ الإرسال</b></td><td>عند عودة التغطية تُرسل دفعةً واحدة لا عملية عملية</td><td>إعادة محاولة تصاعدية بحد أقصى خمس مرات</td></tr>
+<tr><td><b>٤ حل التعارض</b></td><td>الخادم يفحص كل عملية: هل استُهلك مفتاحها؟ هل صُرفت القسيمة من جهاز آخر؟</td><td>الأسبق زمنياً يفوز، والمتأخر يُعلَّم «تعارض» ويُحال لمراجعة بشرية</td></tr>
+<tr><td><b>٥ التأكيد</b></td><td>الخادم يُرجع قوائم النجاح والفشل والتعارض، والجهاز يمسح الناجح فقط</td><td>المسح قبل التأكيد أخطر خطأ ممكن هنا</td></tr>
+</tbody>
+</table>
+
+<div class="note crit">
+<b>حالة الحافة الإلزامية</b>
+<p>جهازان في مركزين يصرفان القسيمة نفسها بلا اتصال. عند المزامنة يُقبل الأسبق ويُرفض الثاني بحالة «تعارض»، <b>ويُنشأ بلاغ تلقائي لوحدة الحماية</b> — لأن هذا نمط احتيال محتمل لا مجرد خطأ تقني. سيناريو اختبار إلزامي قبل التسليم.</p>
+</div>
+</section>
+
+<!-- 13 -->
+<section id="s13">
+<h2><span class="n">13</span>الأمان</h2>
+<div class="lede">خمس طبقات، كل واحدة تفترض فشل التي قبلها.</div>
+
+<table>
+<thead><tr><th style="width:130px">الطبقة</th><th>الإجراء</th><th style="width:190px">الأداة</th></tr></thead>
+<tbody>
+<tr><td><b>الحافة</b></td><td>HTTPS إلزامي، ورؤوس أمان، ونطاقات محددة، وحد لحجم الطلب</td><td class="mono">Nginx · TLS 1.3</td></tr>
+<tr><td><b>المعدل</b></td><td>تقييد لكل عنوان ولكل حساب، بتشديد على الدخول والتحقق من الهوية</td><td class="mono">slowapi + Redis</td></tr>
+<tr><td><b>الهوية</b></td><td>رمز قصير العمر مع رمز تجديد، ومصادقة ثنائية إلزامية للأدوار الأربعة الحساسة</td><td class="mono">PyJWT · pyotp</td></tr>
+<tr><td><b>الصلاحية</b></td><td>فحص الصلاحية عبر اعتمادية واحدة عند كل مسار — لا فحص يدوي متكرر</td><td class="mono">FastAPI Depends</td></tr>
+<tr><td><b>البيانات</b></td><td>تشفير الحقول الحساسة، وتجزئة كلمات المرور والرموز السرية، وسجل غير قابل للتعديل</td><td class="mono">AES-256-GCM · bcrypt</td></tr>
+</tbody>
+</table>
+
+<h3>سبع قواعد غير قابلة للتفاوض</h3>
+<ol>
+<li>الرمز السري لا يُعرض في أي شاشة ولا يعود في أي استجابة — يُرسل مرة واحدة للمواطن ويُتحقق منه بالمقارنة.</li>
+<li>الرقم الوطني لا يُخزَّن خاماً ولا يظهر كاملاً — يُقنَّع إلى آخر أربع خانات.</li>
+<li>سجل التدقيق لا يُكتب فيه من الخارج، وتُسحب صلاحيتا التعديل والحذف من مستخدم التطبيق.</li>
+<li>لا سر واحد في المستودع — كل المفاتيح من متغيرات البيئة و<code>.env.example</code> بقيم وهمية.</li>
+<li>رمز QR موقّع بـ HMAC لا نص عادي.</li>
+<li>رسالة فشل الدخول واحدة سواء كان الحساب غير موجود أو كلمة المرور خاطئة.</li>
+<li>السجلات لا تحتوي أرقاماً وطنية ولا رموزاً سرية ولا كلمات مرور ولا رموز جلسة — مرشّح على مستوى المسجّل وفحص آلي في التكامل المستمر.</li>
+</ol>
+
+<div class="note crit">
+<b>مِلح تجزئة الرقم الوطني</b>
+<p>يُولَّد مرة واحدة ويُحفظ خارج المستودع، <b>ولا يتغيّر أبداً</b>. تغييره بعد بدء التشغيل يجعل كل التجزئات المخزّنة عديمة الفائدة وينهار فحص الازدواجية بصمت بلا أي رسالة خطأ — وهو أخطر عطل ممكن لأنه لا يُكتشف إلا متأخراً.</p>
+</div>
+</section>
+
+<!-- 14 -->
+<section id="s14">
+<h2><span class="n">14</span>الأداء وقيود البيئة</h2>
+<div class="lede">النظام يُصمَّم لأسوأ ظرف لا لأفضله.</div>
+
+<table>
+<thead><tr><th style="width:210px">القيد البيئي</th><th>الأثر على التصميم</th></tr></thead>
+<tbody>
+<tr><td>شبكات ضعيفة ومتذبذبة</td><td>سقف 500KB لبوابة المواطن · لا خطوط ويب فيها · لا مكتبات ثقيلة · دفعات لا طلبات متتالية</td></tr>
+<tr><td>أجهزة أندرويد قديمة</td><td>عرض من الخادم لا تطبيق أحادي الصفحة · لا ظلال ولا حركات · رسوم SVG بسيطة</td></tr>
+<tr><td>انقطاع الكهرباء</td><td>حفظ تلقائي للمسودات محلياً · استئناف العملية من حيث توقفت</td></tr>
+<tr><td>ضوء الشمس المباشر</td><td>تباين عالٍ في الألوان · لا نص أصغر من 12px · لا اعتماد على اللون وحده</td></tr>
+<tr><td>تفاوت الأمية الرقمية</td><td>خطوة واحدة لكل شاشة في مسار المواطن · لغة عربية بسيطة · قناة USSD كبديل كامل</td></tr>
+<tr><td>عمل ميداني واقف</td><td>مساحة لمس 48px · أزرار كبيرة · إدخال بأقل عدد نقرات</td></tr>
+</tbody>
+</table>
+
+<h3>أهداف الأداء المقاسة</h3>
+<table>
+<thead><tr><th style="width:280px">المؤشر</th><th>الهدف</th></tr></thead>
+<tbody>
+<tr><td>زمن استجابة التحقق من الهوية</td><td>أقل من 100ms عند المئين 95 — شرط في ميثاق المشروع</td></tr>
+<tr><td>زمن استجابة باقي المسارات</td><td>أقل من 200ms عند المئين 95</td></tr>
+<tr><td>حجم صفحة بوابة المواطن</td><td>أقل من 500KB شاملاً كل شيء</td></tr>
+<tr><td>زمن أول عرض على شبكة 3G بطيئة</td><td>أقل من 3 ثوانٍ</td></tr>
+<tr><td>نسبة أخطاء الخادم</td><td>أقل من 1%</td></tr>
+<tr><td>عمق طابور المزامنة</td><td>لا يتجاوز 500 عملية معلّقة على مستوى المنصة</td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- 15 -->
+<section id="s15">
+<h2><span class="n">15</span>هيكل المستودع والمعايير</h2>
+<div class="lede">مستودع واحد وقواعد عمل موحّدة.</div>
+
+<pre class="tree"><span class="d">yedsp/</span>
+├── <span class="d">app/</span>
+│   ├── main.py                     <span class="c"># نقطة الانطلاق وتسجيل الموجّهات</span>
+│   ├── <span class="d">core/</span>  config · security · deps · exceptions
+│   ├── <span class="d">models/</span>                     <span class="c"># SQLAlchemy — جدول لكل ملف</span>
+│   ├── <span class="d">schemas/</span>                    <span class="c"># Pydantic — طلب واستجابة</span>
+│   ├── <span class="d">api/v1/</span>                     <span class="c"># موجّهات: تحقق وصلاحية ثم نداء خدمة</span>
+│   │   ├── auth · identity · citizens · refs
+│   │   ├── requests · vouchers · complaints
+│   │   ├── field · analytics · grants
+│   │   └── sync · audit · admin
+│   ├── <span class="d">services/</span>                   <span class="c"># كل منطق الأعمال هنا حصراً</span>
+│   │   ├── identity_service · vulnerability_service
+│   │   ├── voucher_service · sync_service
+│   │   ├── analytics_service · audit_service
+│   ├── <span class="d">middleware/</span>                 <span class="c"># تتبع · معدل · تدقيق</span>
+│   ├── <span class="d">web/</span>                        <span class="c"># قوالب Jinja2 لكل المساحات الست</span>
+│   │   ├── <span class="d">templates/</span>  <span class="d">static/</span>
+│   └── <span class="d">field_client/</span>               <span class="c"># تطبيق الميدان — SQLCipher + طابور</span>
+├── <span class="d">alembic/versions/</span>              <span class="c"># الهجرات — لا تعديل يدوي على القاعدة</span>
+├── <span class="d">tests/</span>  unit · integration · conftest.py
+├── <span class="d">docs/</span>  spec · schema.sql · openapi.json · <span class="d">decisions/</span>
+├── <span class="d">scripts/</span>  seed_refs.py · verify_audit_chain.py
+├── docker-compose.yml  Dockerfile  .env.example
+└── .github/workflows/ci.yml</pre>
+
+<h3>قواعد العمل</h3>
+<table>
+<thead><tr><th style="width:170px">القاعدة</th><th>التفصيل</th></tr></thead>
+<tbody>
+<tr><td>فصل الطبقات</td><td>الموجّه يتحقق ويستدعي خدمة. لا استعلام ولا منطق أعمال في ملف موجّه — يجعل اختبار المنطق ممكناً بلا خادم</td></tr>
+<tr><td>الفروع</td><td>فرعان دائمان <code>main</code> و<code>develop</code>، وفروع مهام قصيرة: <code>feature/{story}-{desc}</code></td></tr>
+<tr><td>الالتزامات</td><td class="mono">feat(vouchers): add PIN verification endpoint</td></tr>
+<tr><td>طلب الدمج</td><td>مراجعة إلزامية من عضو آخر + نجاح الفحوص. لا دمج مباشر</td></tr>
+<tr><td>حجم الطلب</td><td>أقل من 400 سطر تغيير — الطلبات الضخمة تُوافَق شكلياً ولا تُراجع فعلياً</td></tr>
+<tr><td>التسمية</td><td><code>snake_case</code> في القاعدة و<code>camelCase</code> في JSON، والتحويل بإعداد Pydantic واحد</td></tr>
+<tr><td>الأسرار</td><td>لا مفتاح في المستودع؛ <code>.env</code> في التجاهل و<code>.env.example</code> فقط هو المُتتبَّع</td></tr>
+</tbody>
+</table>
+
+<h3>تعريف المُنجَز</h3>
+<p>القصة لا تُنقل إلى «منجز» إلا باستيفاء السبعة: الكود مدموج بعد مراجعة · اختبارات تغطي المسار الناجح وفشلاً واحداً · هجرة موجودة إن مسّ التغيير المخطط · المسار موثّق في OpenAPI · الشاشة تحمل حالات التحميل والفارغ والخطأ · الفحوص الآلية خضراء · لا لون ذهبي خارج زر الفعل الرئيسي.</p>
+</section>
+
+<!-- 16 -->
+<section id="s16">
+<h2><span class="n">16</span>الاختبار والقبول</h2>
+<div class="lede">سيناريوهات إلزامية لا تكتمل الجاهزية بدونها.</div>
+
+<table>
+<thead><tr><th style="width:250px">السيناريو</th><th>النتيجة المتوقعة</th></tr></thead>
+<tbody>
+<tr><td>تسجيل مستفيد برقم موجود</td><td>رفض بـ <code>409</code> ورمز <code>DUPLICATE_BENEFICIARY</code> مع معرّف الطلب القائم</td></tr>
+<tr><td>تقديم طلب ثانٍ في نفس القطاع</td><td>رفض — يفرضه فهرس القاعدة لا الكود</td></tr>
+<tr><td>تعديل مدخلات الهشاشة في المتصفح</td><td>لا أثر على النقاط — الاحتساب في الخادم</td></tr>
+<tr><td>رفض طلب بلا سبب</td><td>رفض بـ <code>422</code> — القيد على مستوى القاعدة</td></tr>
+<tr><td>صرف قسيمة مصروفة</td><td>رفض بـ <code>409</code> ولا حلقة تدقيق جديدة</td></tr>
+<tr><td>إعادة إرسال نفس مفتاح التفرّد</td><td>إرجاع النتيجة الأصلية بلا تكرار</td></tr>
+<tr><td>رمز سري خاطئ ثلاث مرات</td><td>تعليق القسيمة وإنشاء بلاغ حماية تلقائي</td></tr>
+<tr><td>دخول بدور حساس بلا مصادقة ثنائية</td><td>رفض بـ <code>403</code> مهما صحّت كلمة المرور</td></tr>
+<tr><td>مانح يطلب منحة مانح آخر</td><td>رفض بـ <code>403</code> — العزل على مستوى الاستعلام</td></tr>
+<tr><td>بلاغ فئة S ينتقل إلى التحقيق</td><td>أزمة ميدانية تُفتح تلقائياً في المحافظة وتُخطر المنسق</td></tr>
+<tr><td>مزامنة دفعة فيها عملية متعارضة</td><td>قبول السليم وتعليم المتعارض دون رفض الدفعة كلها</td></tr>
+<tr><td>جهازان يصرفان نفس القسيمة بلا اتصال</td><td>الأسبق يفوز، والثاني «تعارض»، وبلاغ حماية تلقائي</td></tr>
+<tr><td>محاولة تعديل حلقة في سجل التدقيق</td><td>لا أثر، والفحص اليومي يكشف أي كسر</td></tr>
+<tr><td>موظف يطلب عرض الرمز السري</td><td>لا يوجد مسار يُرجعه أصلاً</td></tr>
+<tr><td>قياس حجم بوابة المواطن</td><td>أقل من 500KB شاملاً</td></tr>
+</tbody>
+</table>
+
+<p>هرم الاختبار: <b>70% اختبارات وحدة</b> على مجلد <code>services/</code> — لأنه أكثر ما يتغيّر وأقلّ ما يُرى — و<b>25% اختبارات تكامل</b> على مسارات كاملة بقاعدة اختبار حقيقية، و<b>5% يدوي</b> لسيناريو الرحلة الكاملة قبل كل عرض. التغطية المطلوبة 80% على <code>services/</code> و60% إجمالاً.</p>
+</section>
+
+<!-- 19 -->
+<section id="s17">
+<h2><span class="n">17</span>قائمة الجاهزية للتسليم</h2>
+<div class="lede">ما يجب أن يكون صحيحاً قبل العرض النهائي.</div>
+
+<div class="grid g2">
+<div class="box">
+<h4>المنتج والبيانات</h4>
+<p>☐ الوحدات التسع تعمل وتتبادل عبر خدماتها لا عبر قواعد بعضها<br>
+☐ الهجرات تعمل على قاعدة فارغة بأمر واحد<br>
+☐ لا نص عربي حر في أي حقل مرجعي<br>
+☐ كل الأرقام المتحققة محسوبة لا مخزّنة<br>
+☐ القرارات العشرة موثّقة في <code>docs/decisions/</code></p>
+</div>
+<div class="box">
+<h4>الهوية البصرية</h4>
+<p>☐ الاثنا عشر مكوّناً مستخدمة في كل الشاشات<br>
+☐ الذهبي حصري لزر الفعل الرئيسي — زر واحد لكل شاشة<br>
+☐ كل شاشة تحمل حالات التحميل والفارغ والخطأ<br>
+☐ كل حالة مفهومة بالنص لا باللون وحده<br>
+☐ مساحة اللمس 48px في كل مسارات الميدان</p>
+</div>
+<div class="box">
+<h4>الأمان</h4>
+<p>☐ لا رمز سري يُعرض أو يُرجَع في أي مسار<br>
+☐ الرقم الوطني مجزّأ ومقنّع ولا يظهر في السجلات<br>
+☐ المصادقة الثنائية مفعّلة على الأدوار الأربعة<br>
+☐ صلاحيتا التعديل والحذف مسحوبتان على سجل التدقيق<br>
+☐ لا سر واحد في المستودع</p>
+</div>
+<div class="box">
+<h4>الأداء والتشغيل</h4>
+<p>☐ التحقق من الهوية أقل من 100ms<br>
+☐ بوابة المواطن أقل من 500KB<br>
+☐ تغطية اختبارات <code>services/</code> تتجاوز 80%<br>
+☐ سلسلة التدقيق تمر الفحص اليومي بلا كسر<br>
+☐ نسخة احتياطية مُختبَرة الاسترجاع فعلياً</p>
+</div>
+</div>
+
+<div class="note ok">
+<b>معيار النجاح النهائي</b>
+<p>مواطن يُسجَّل ميدانياً بلا إنترنت، فيُتحقق من هويته، ويُعتمد طلبه، وتصدر قسيمته، وتُصرف في مركزه — ثم يظهر الحدث نفسه في خارطة التغطية، وفي سجل التدقيق، وفي لوحة المانح، وكلها من الرقم نفسه. إذا اكتمل هذا الخيط فقد بنينا منصة؛ وإذا انقطع في أي نقطة فقد بنينا وحدات متجاورة.</p>
+</div>
+</section>
+
+</main>
+</div>
+
+<footer>مواصفة بناء النظام الموحّد — المنصة الوطنية للخدمات الرقمية الطارئة في اليمن · NAT-2026-YEDSP · الفريق الأول · الإصدار 1.0 · ٣ سبتمبر ٢٠٢٦</footer>
+
+</body>
+</html>
