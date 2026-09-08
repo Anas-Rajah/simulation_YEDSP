@@ -300,21 +300,36 @@
         "</g>";
     }).join("");
 
+    /* قائمة مرافقة للخارطة: على الشاشات الضيقة تُخفى التسميات داخل الأشكال لصغرها،
+       فتحلّ محلها هذه القائمة النصية المقروءة — وهي نفسها قابلة للنقر. */
+    var listHtml = "";
+    if (showNames) {
+      listHtml = '<div class="gov-list">' + highlightGovernorates.map(function (g) {
+        var geo = GEO.governorates[g.id];
+        if (!geo) return "";
+        var pct = valueFn(g);
+        return '<button type="button" class="gov-list-item" data-gov="' + g.id + '">' +
+          '<i style="background:' + covColor(pct) + '"></i>' +
+          "<b>" + esc((MAP_LABELS[g.id] || {}).short || geo.name) + "</b>" +
+          "<span>" + pct + "%</span></button>";
+      }).join("") + "</div>";
+    }
+
     return '<div class="gov-map-wrap' + (showNames ? " named" : "") + '">' +
-      '<svg class="gov-map" viewBox="' + GEO.viewBox + '" xmlns="http://www.w3.org/2000/svg">' + shapes + "</svg></div>";
+      '<svg class="gov-map" viewBox="' + GEO.viewBox + '" xmlns="http://www.w3.org/2000/svg">' + shapes + "</svg></div>" +
+      listHtml;
   }
 
+  // يغطي أشكال الخارطة وعناصر القائمة المرافقة معاً (كلاهما يحمل data-gov)
   function bindGovMap(container, onClick) {
-    var svg = container.querySelector(".gov-map");
-    if (!svg) return;
-    svg.addEventListener("click", function (e) {
+    container.addEventListener("click", function (e) {
       var g = e.target.closest("[data-gov]");
-      if (g) onClick(g.getAttribute("data-gov"));
+      if (g && container.contains(g)) onClick(g.getAttribute("data-gov"));
     });
-    svg.addEventListener("keydown", function (e) {
+    container.addEventListener("keydown", function (e) {
       if (e.key !== "Enter" && e.key !== " ") return;
       var g = e.target.closest("[data-gov]");
-      if (g) { e.preventDefault(); onClick(g.getAttribute("data-gov")); }
+      if (g && g.tagName !== "BUTTON") { e.preventDefault(); onClick(g.getAttribute("data-gov")); }
     });
   }
 
